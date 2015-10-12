@@ -154,7 +154,7 @@ public class Probery {
 			break;
 		case 2:
 			logger.info("Probability Query");
-			queryPlan = SQLLine.getQueryPlan();
+			queryPlan = SQLLine.SQLParser();
 			blockNumber = index.getBlockNumber(queryPlan);
 			dataSpace = DataSpaceFactory.getDataSpace(queryPlan.getTableName());
 			block = dataSpace.getBlock(blockNumber);
