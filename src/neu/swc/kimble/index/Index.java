@@ -2,8 +2,8 @@ package neu.swc.kimble.index;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
+import neu.swc.kimble.ETL.KVPair;
 import neu.swc.kimble.SQLLine.QueryPlan;
 import neu.swc.kimble.tables.ReferAttribute;
 import neu.swc.kimble.tables.Table;
@@ -25,7 +25,7 @@ public class Index {
 		ReferAttribute referAttribute;
 		Table table = this.tableList.getTable(queryPlan.getTableName());
 		ArrayList<ReferAttribute> referAttributeList = table.getReferAttributeList();
-		TreeMap<String,String> queryAttribute = queryPlan.getQueryAttributeMap();
+		KVPair<String,String> queryAttribute = queryPlan.getQueryAttribute();
 		int[] attriRegionSize = new int[referAttributeList.size()];
 		int[] coordinate = new int[referAttributeList.size()];
 		for(int i = 0; i < referAttributeList.size(); i++){
