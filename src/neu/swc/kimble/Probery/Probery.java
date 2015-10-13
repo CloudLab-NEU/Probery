@@ -23,7 +23,7 @@ import neu.swc.kimble.probabilityModel.DataSpace;
 import neu.swc.kimble.probabilityModel.DataSpaceFactory;
 import neu.swc.kimble.tables.Table;
 import neu.swc.kimble.tables.TableList;
-import neu.swc.kimble.tables.TableModel;
+//import neu.swc.kimble.tables.TableModel;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -45,7 +45,7 @@ public class Probery {
 	public static boolean isWrite = true;
 	
 	public static final int rows = 10000;
-	public static final String targetDirectoryPath = "/home/kimble/Probery/SourceData/temp/";
+	public static final String targetDirectoryPath = "/home/kimble/ProberyExperiment/SourceData/temp/";
 	public static String sourceFilePath;
 	
 	static final String[] attribute_customer = new String[]{"CUSTKEY","NAME","ADDRESS","NATIONKEY","PHONE","ACCTBAL","MKTSEGMENT","COMMENT"};
@@ -78,14 +78,15 @@ public class Probery {
 			path = reader.readLine();
 			while(path.equals(""))
 				logger.warn("you need to specify source data path!");
-			sourceFilePath =  "/home/kimble/Probery/SourceData/" + path + ".tbl";
+			sourceFilePath =  "/home/kimble/ProberyExperiment/SourceData/" + path + ".tbl";
 			
+			/*
 			Table table = TableModel.getTable(reader);
 			tableList.addTable(table);
-			logger.info("Load Table Model Successfully");
+			logger.info("Load Table Model Successfully");*/
 			reader.close();
 			
-			//Table table = tableList.getTable("Customer"); //Test
+			Table table = tableList.getTable("Customer");
 			
 			dataSpace = new DataSpace(table.getTableName());
 			queryPlan = new QueryPlan();
@@ -141,9 +142,9 @@ public class Probery {
 			while(iterator.hasNext())
 				Probery.writterMap.get(iterator.next()).close();
 			
-			Probery.fsHDFS.copyFromLocalFile(new Path(Probery.uriFile + "/home/kimble/Probery/LocalData/" + table.getTableName()), new Path(Probery.uriHDFS + "/Probery/" + table.getTableName() + "/"));
+			Probery.fsHDFS.copyFromLocalFile(new Path(Probery.uriFile + "/home/kimble/ProberyExperiment/LocalData/" + table.getTableName()), new Path(Probery.uriHDFS + "/ProberyExperiment/" + table.getTableName() + "/"));
 			logger.info("copy file from local to HDFS successfully!");
-			FilePartition.deleteAll(new File("/home/kimble/Probery/LocalData/"));
+			FilePartition.deleteAll(new File("/home/kimble/ProberyExperiment/LocalData/"));
 			
 			Probery.fsHDFS.close();
 			Probery.fsFile.close();
@@ -163,9 +164,7 @@ public class Probery {
 			Double recallRatio = block.getRecallRatio(queryPlan.getRecallProbability());
 			System.err.printf("Recall Ratio: %#.2f\n",recallRatio);
 			reader.close();
-			QueryJob queryJob = new QueryJob();
-			QueryJob.queryAttribute = queryPlan.getQueryAttributeMap();
-			QueryJob.select_key = queryPlan.getSelect_key(); 
+			QueryJob queryJob = new QueryJob(queryPlan.getQueryAttribute(),queryPlan.getSelect_key());
 			queryJob.run(paths);
 			break;
 		case 3:

@@ -47,6 +47,25 @@ public class KVPair<K,V> implements Iterable<K>, Serializable{
 		return true;
 	}
 	
+	public int size(){
+		return this.attribute.size();
+	}
+	
+	public K getK(int i){
+		return this.attribute.get(i);
+	}
+	public V getV(int i){
+		return this.otherAttribute.get(i);
+	}
+	
+	public boolean containsKey(K k){
+		for(K k1:this.attribute){
+			if(k1.equals(k))
+				return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public Iterator<K> iterator() {
 		// TODO Auto-generated method stub
@@ -70,7 +89,6 @@ public class KVPair<K,V> implements Iterable<K>, Serializable{
 		public K next() {
 			// TODO Auto-generated method stub
 			return attribute.get(index++);
-		}
-		
+		}	
 	}
 }

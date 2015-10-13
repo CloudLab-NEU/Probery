@@ -2,7 +2,6 @@ package neu.swc.kimble.MapReduce;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.TreeMap;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -11,30 +10,36 @@ import neu.swc.kimble.ETL.KVPair;
 
 public class DataQuery extends Mapper<Text, Text, Text, Text>{
 	
-	KVPair<String,String> kvpair;
-	String strKey, strValue;
+	private KVPair<String,String> kvpair = new KVPair<String,String>();
 	
 	public void map(Text key, Text value, Context context) throws IOException, InterruptedException{
-		kvpair = new KVPair<String,String>();
-		boolean flag = true;
+		
+		KVPair<String,String> queryAttribute = new KVPair<String,String>();
+		String strKey, strValue,temp;
 		Iterator<String> iterator;
 		Text rKey = new Text();
-		Text rValue = new Text();
+		Text rValue = new Text(); 
+		boolean flag = true;
 		
 		strKey =key.toString();
 		strValue = value.toString();
 		
 		if(strKey.equals("&")){
+			for(int i=0; i<Integer.parseInt(context.getConfiguration().get("querySize")); i++)
+				queryAttribute.put(context.getConfiguration().get("queryKey" + i), context.getConfiguration().get("queryValue" + i));
+		
 			iterator = kvpair.iterator();
 			while(iterator.hasNext() & flag){
-				if(!QueryJob.queryAttribute.get(iterator.next()).equals(kvpair.getCorrespondingValue()))
-					flag = false;
+					temp = iterator.next();
+					if(queryAttribute.containsKey(temp)){
+						if(!queryAttribute.get(temp).equals(kvpair.getCorrespondingValue()))
+							flag = false;
+					}
 			}
-			
 			if(flag){
-				for(String str:QueryJob.select_key){
-					rKey.set(str);
-					rValue.set(kvpair.get(str));
+				for(int i=0; i<Integer.parseInt(context.getConfiguration().get("selectKeySize"));i++){
+					rKey.set(context.getConfiguration().get("selectKey" + i));
+					rValue.set(kvpair.get(context.getConfiguration().get("selectKey" + i)));
 					context.write(rKey,rValue);
 				}
 			}
