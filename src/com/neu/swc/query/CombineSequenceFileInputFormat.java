@@ -1,4 +1,4 @@
-package neu.swc.kimble.MapReduce;
+package com.neu.swc.query;
 
 import java.io.IOException;  
   

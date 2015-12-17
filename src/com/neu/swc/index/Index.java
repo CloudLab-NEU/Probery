@@ -1,13 +1,13 @@
-package neu.swc.kimble.index;
+package com.neu.swc.index;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import neu.swc.kimble.ETL.KVPair;
-import neu.swc.kimble.SQLLine.QueryPlan;
-import neu.swc.kimble.tables.ReferAttribute;
-import neu.swc.kimble.tables.Table;
-import neu.swc.kimble.tables.TableList;
+import com.neu.swc.SQLLine.QueryPlan;
+import com.neu.swc.etl.KVPair;
+import com.neu.swc.tables.ReferAttribute;
+import com.neu.swc.tables.Table;
+import com.neu.swc.tables.TableList;
 
 public class Index {
 

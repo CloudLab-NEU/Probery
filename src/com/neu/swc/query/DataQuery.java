@@ -1,4 +1,4 @@
-package neu.swc.kimble.MapReduce;
+package com.neu.swc.query;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import neu.swc.kimble.ETL.KVPair;
+import com.neu.swc.etl.KVPair;
 
 public class DataQuery extends Mapper<Text, Text, Text, Text>{
 	

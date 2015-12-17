@@ -1,4 +1,4 @@
-package neu.swc.kimble.probabilityModel;
+package com.neu.swc.probabilityModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import neu.swc.kimble.ETL.KVPair;
-import neu.swc.kimble.Probery.Probery;
+import com.neu.swc.ETL.KVPair;
+import com.neu.swc.Probery.Probery;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -20,7 +20,7 @@ public class Block {
 
 	private int blockNumber;
 	private double[] placingProbability;
-	private ArrayList<Integer> placingNumber;
+	public ArrayList<Integer> placingNumber;
 	private String dataSpace;
 	
 	private int counter;
@@ -44,7 +44,7 @@ public class Block {
 	
 	public ArrayList<Path> getTrunkPath(double recallProbability){
 		ArrayList<Path> paths = new ArrayList<Path>();
-		String filePath = "/Probery/" + this.dataSpace + "/"+ Integer.toString(this.getBucketGroupNumber()) + "/";
+		String filePath = "/user/kimble/probery/" + this.dataSpace + "/"+ Integer.toString(this.getBucketGroupNumber()) + "/";
 		if(this.placingNumber.size() == 0)
 			return null;
 		else if(recallProbability == 1){
@@ -59,7 +59,6 @@ public class Block {
 		double[][] probability = this.queryData(recallProbability);
 		for(int i=0; i<this.placingNumber.size(); i++){
 			for(int j=0; j<this.placingProbability.length; j++){
-				System.err.println(probability[i][j]);
 				if(probability[i][j] < 1)
 					paths.add(new Path(filePath + Integer.toString(j+1) +"/"+ Integer.toString(i+1)));
 			}
@@ -86,7 +85,7 @@ public class Block {
 		return sumSelect/sumAll;
 	}
 	
-	private double[][] queryData(double recallProbability){
+	public double[][] queryData(double recallProbability){
 		double sum = 0;
 		double probability[][] = new double[this.placingNumber.size()][this.placingProbability.length];
 		
@@ -116,7 +115,7 @@ public class Block {
 		return probability;
 	}
 	
-	private double getMaxValue(double[][] probability){
+	public double getMaxValue(double[][] probability){
 		int tempRow = 0;
 		int tempColumn = 0;
 		double maxValue = 0;
@@ -169,7 +168,7 @@ public class Block {
 	}
 	
 	@SuppressWarnings({ "deprecation" })
-	private boolean loadCacheData(){
+	public boolean loadCacheData(){
 		String filePath;
 		Path path;
 		int fileNumber;
@@ -229,9 +228,10 @@ public class Block {
 }
 	
 	
-	private boolean isExistingTrunk(int fileNumber) throws IOException{
+	@Deprecated
+	public boolean isExistingTrunk(int fileNumber) throws IOException{
 		File file;
-		String filePath = "/home/kimble/Probery/LocalData/" + this.dataSpace + "/" + Integer.toString(this.getBucketGroupNumber()) + "/";
+		String filePath = "file:///home/kimble/software/probery/data/" + this.dataSpace + "/" + Integer.toString(this.getBucketGroupNumber()) + "/";
 		for(int i = 1; i<= this.placingProbability.length; i++){
 			filePath += Integer.toString(i) + "/" + Integer.toString(fileNumber);
 			file = new File(filePath);
@@ -243,16 +243,35 @@ public class Block {
 		return false;
 	}
 	
-	private String getFilePath(){
-		String filePath = "/home/kimble/Probery/LocalData/" + this.dataSpace + "/" + Integer.toString(this.getBucketGroupNumber()) + "/" + Integer.toString(this.bucketNumberToPlacing()) + "/";
+	public boolean isAddingTrunk(SequenceFile.Writer[] writerArray) throws IOException{
+		for(SequenceFile.Writer writer:writerArray){
+			if(writer != null){
+				if(writer.getLength() > 67100000)
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	public String getFilePath(){
+		String filePath = "hdfs://cloud0000:9000/user/kimble/probery/" + this.dataSpace + "/" + Integer.toString(this.getBucketGroupNumber()) + "/" + Integer.toString(this.bucketNumberToPlacing()) + "/";
 		return filePath;
 	}
 	
-	private int getBucketGroupNumber(){
-		return this.blockNumber/PlacingProbability.getInstance().getBucketNumberPerGroup() + 1;
+	public String getFilePath(int number){
+		String filePath = "file:///home/kimble/software/probery/data/" + this.dataSpace + "/" + Integer.toString(this.getBucketGroupNumber()) + "/" + Integer.toString(number) + "/";
+		return filePath;
 	}
 	
-	private int bucketNumberToPlacing(){
+	public int getBucketGroupNumber(){
+		int value = this.blockNumber%PlacingProbability.getInstance().getBucketNumberPerGroup();
+		if(value == 0)
+			return this.blockNumber/PlacingProbability.getInstance().getBucketNumberPerGroup();
+		else
+			return this.blockNumber/PlacingProbability.getInstance().getBucketNumberPerGroup()+ 1;
+	}
+	
+	public int bucketNumberToPlacing(){
 		int randomNumber;
 		double probabilitySum = 0;
 		Random random = new Random();

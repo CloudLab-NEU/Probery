@@ -1,4 +1,4 @@
-package neu.swc.kimble.tables;
+package com.neu.swc.tables;
 
 import java.io.BufferedReader;
 import java.io.IOException;

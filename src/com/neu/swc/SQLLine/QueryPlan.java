@@ -1,10 +1,10 @@
-package neu.swc.kimble.SQLLine;
+package com.neu.swc.SQLLine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import neu.swc.kimble.ETL.KVPair;
+import com.neu.swc.etl.KVPair;
 
 public class QueryPlan {
 	

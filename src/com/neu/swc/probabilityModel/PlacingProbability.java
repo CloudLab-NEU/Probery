@@ -1,4 +1,4 @@
-package neu.swc.kimble.probabilityModel;
+package com.neu.swc.probabilityModel;
 
 public class PlacingProbability {
 

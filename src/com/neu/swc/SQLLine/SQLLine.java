@@ -1,4 +1,4 @@
-package neu.swc.kimble.SQLLine;
+package com.neu.swc.SQLLine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import neu.swc.kimble.ETL.KVPair;
+import com.neu.swc.etl.KVPair;
 
 /*
  * SQL-Like clause programmer:

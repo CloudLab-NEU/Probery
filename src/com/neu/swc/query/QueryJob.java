@@ -1,17 +1,22 @@
-package neu.swc.kimble.MapReduce;
+package com.neu.swc.query;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
-
-import neu.swc.kimble.ETL.KVPair;
-import neu.swc.kimble.Probery.Probery;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.FileAlreadyExistsException;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+import com.neu.swc.ETL.KVPair;
+import com.neu.swc.Probery.Probery;
+
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 public class QueryJob {
@@ -26,17 +31,15 @@ public class QueryJob {
 		this.select_key = select_key;
 	}
 
-	public void run(ArrayList<Path> paths){
-		try {
-			conf.set("mapred.max.split.size", "104857600");
-			conf.setBoolean("mapred.output.compress", false); 
+	@SuppressWarnings("deprecation")
+	public void run(ArrayList<Path> paths) throws IOException, ClassNotFoundException, InterruptedException{
+			//conf.setBoolean("mapreduce.map.output.compress", false); 
 			
-			@SuppressWarnings("deprecation")
 			Job job = new Job(this.conf);
 			job.setJobName("Probery");
 			job.setJarByClass(Probery.class);
 			job.setMapperClass(DataQuery.class);
-			job.setInputFormatClass(CombineSequenceFileInputFormat.class);
+			job.setInputFormatClass(SequenceFileInputFormat.class);
 			job.setOutputFormatClass(TextOutputFormat.class);
 			
 			job.setMapOutputKeyClass(Text.class);
@@ -55,12 +58,14 @@ public class QueryJob {
 			}
 			job.getConfiguration().set("querySize",Integer.toString(this.queryAttribute.size()));
 			
-			FileOutputFormat.setOutputPath(job,new Path(Probery.uriFile + "/home/kimble/ProberyExperiment/output/"));
+			FileOutputFormat.setOutputPath(job,new Path(Probery.uriHDFS + "/user/kimble/probery/result/"));
 			
-	        System.exit(job.waitForCompletion(true)?0:1);
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			try{
+				job.waitForCompletion(true);
+			}catch(FileAlreadyExistsException e){
+				FileSystem fs = FileSystem.get(URI.create(Probery.uriHDFS),new Configuration());
+				fs.delete(new Path(Probery.uriHDFS + "/user/kimble/probery/result/"));
+				job.waitForCompletion(true);
+			}
 	}
 }

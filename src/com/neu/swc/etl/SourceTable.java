@@ -1,4 +1,4 @@
-package neu.swc.kimble.ETL;
+package com.neu.swc.etl;
 
 public class SourceTable {
 

@@ -1,4 +1,4 @@
-package neu.swc.kimble.tables;
+package com.neu.swc.tables;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

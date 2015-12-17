@@ -1,4 +1,4 @@
-package neu.swc.kimble.ETL;
+package com.neu.swc.etl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
